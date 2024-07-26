@@ -1,8 +1,8 @@
 import telebot,random
 from telebot import types
-with open('token_15gr.txt') as f:
+with open('token_5gr.txt') as f:
     TOKEN = f.read()
-my_chatid = -4137666167
+
 bot = telebot.TeleBot(TOKEN)
 pobednoe = random.randint(0,4)
 keyboard = telebot.types.InlineKeyboardMarkup()
@@ -10,6 +10,7 @@ lst = []
 for i in range(5):
     lst.append(telebot.types.InlineKeyboardButton(text='🎩',callback_data=str(random.randint(0,4))))
 keyboard.row(*lst)
+
 @bot.message_handler(commands=['start'])
 def start(message):
     bot.send_message(message.chat.id,'Сделай свой выбор',reply_markup=keyboard)
