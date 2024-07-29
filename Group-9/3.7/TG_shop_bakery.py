@@ -35,9 +35,9 @@ def universal(message):
             bot.send_message(message.chat.id,f'/{i} - {j}')
     elif message.text == '/create_client':
         if str(message.from_user.id) in list(shop.keys()):
-            bot.send_message(message.chat.id,'Вы уже есть в списке клиентов')
+            bot.send_message(message.chat.id,f'Вы уже есть в списке клиентов')
         else:
-            shop[message.from_user.id] = {'TG_fist_name': message.from_user.first_name, 'TG_name': '@'+message.from_user.username, 'покупка': [], 'счёт': 0}
+            shop[str(message.from_user.id)] = {'TG_fist_name': message.from_user.first_name, 'TG_name': '@'+message.from_user.username, 'покупка': [], 'счёт': 0}
             with open('shop_bakery_gr9.json', 'w',encoding='utf-8') as f:
                 json.dump(shop,f,indent=2,ensure_ascii=False)
             bot.send_message(message.chat.id,'Вы внесены в список клиентов')
@@ -56,12 +56,12 @@ def universal(message):
 @bot.callback_query_handler(func = lambda call: True)
 def callback_query(call):
     global shop
-    a = []
     if call.data in list(products.keys()):
         bot.answer_callback_query(call.id,f'В корзину добавлен {call.data}')
-        a += call.data
+        shop[str(call.from_user.id)]['покупка'].append(call.data)
+        shop[str(call.from_user.id)]['счёт'] += products[call.data]
     elif call.data == 'Завершить':
-        bot.send_message(call.message.chat.id,f'Товары в корзине: {a}, К оплате: {shop[call.from_user.id]["счёт"]}')
+        bot.send_message(call.message.chat.id,f'Товары в корзине: {shop[str(call.from_user.id)]['покупка']}, К оплате: {shop[str(call.from_user.id)]["счёт"]}')
         bot.send_message(call.message.chat.id,f'Оплатить можно по номеру 8-999-495-34-80, после оплаты введите /оплачено')
         with open('shop_bakery_gr9.json', 'w',encoding='utf-8') as f:
                 json.dump(shop,f,indent=2,ensure_ascii=False)
