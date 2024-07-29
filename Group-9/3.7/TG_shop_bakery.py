@@ -1,9 +1,3 @@
-# При вводе команды /start необходимо создать inline клавиатуру с 5 кнопками 
-# (визуально одинаковыми, но в callback_data должны быть разные значения от 0 до 4, в зависимости от кнопки). 
-# При нажатии на любую из кнопок будет вызываться обработчик, в котором с помощью модуля random будем определять 
-# победное значение (от 0 до 4). Далее с помощью условия сравнивается ответ пользователя и победное значение и 
-# выводится результат. 
-
 import telebot, random, json
 with open('token_9gr.txt') as f:
     TOKEN = f.read()
@@ -19,8 +13,6 @@ products = {
     "Хлеб чёрный": 27,
     "Булочка с изюмом": 20
 }
-shopping_cart = []
-score = 0
 user_plata_id = 0
 keyboard_products = telebot.types.InlineKeyboardMarkup()
 for i,j in products.items():
@@ -34,7 +26,8 @@ comands = {'help': 'Выводит все команды которые може
            'info': 'Выводит зарегистрированных пользователей',
            'create_client': "Регистрация клиента",
            "create_buy": "Создание покупки",
-           "оплачено": "Команда вводится после оплаты счёта для подтверждения оплаты"}
+           "оплачено": "Команда вводится после оплаты счёта для подтверждения оплаты",
+           }
 @bot.message_handler(commands=list(comands.keys()))
 def universal(message):
     if message.text == '/help':
@@ -44,9 +37,9 @@ def universal(message):
         if str(message.from_user.id) in list(shop.keys()):
             bot.send_message(message.chat.id,'Вы уже есть в списке клиентов')
         else:
-            shop[message.from_user.id] = {'TG_fist_name': message.from_user.first_name, 'TG_name': '@'+message.from_user.username}
+            shop[message.from_user.id] = {'TG_fist_name': message.from_user.first_name, 'TG_name': '@'+message.from_user.username, 'покупка': [], 'счёт': 0}
             with open('shop_bakery_gr9.json', 'w',encoding='utf-8') as f:
-                json.dump(shop,f,indent=2)
+                json.dump(shop,f,indent=2,ensure_ascii=False)
             bot.send_message(message.chat.id,'Вы внесены в список клиентов')
     elif message.text == '/info':
         for i,j in shop.items():
@@ -59,26 +52,24 @@ def universal(message):
     elif message.text == '/оплачено':
         global user_plata_id
         user_plata_id = str(message.from_user.id)
-        #bot.send_photo(1680980801,message.document)
         bot.send_message(1680980801,f'Подтвердите оплату счёта от {shop[user_plata_id]}',reply_markup=keyboard_score)
 @bot.callback_query_handler(func = lambda call: True)
 def callback_query(call):
-    global score, shopping_cart,shop
-    if call.data != 'Завершить' and call.data != 'Да' and call.data != 'Нет':
+    global shop
+    a = []
+    if call.data in list(products.keys()):
         bot.answer_callback_query(call.id,f'В корзину добавлен {call.data}')
-        shopping_cart.append(call.data)
-        score += products[call.data]
+        a += call.data
     elif call.data == 'Завершить':
-        all_in_cart = (',').join(shopping_cart)
-        bot.send_message(call.message.chat.id,f'Товары в корзине: {all_in_cart}, К оплате: {score}')
+        bot.send_message(call.message.chat.id,f'Товары в корзине: {a}, К оплате: {shop[call.from_user.id]["счёт"]}')
         bot.send_message(call.message.chat.id,f'Оплатить можно по номеру 8-999-495-34-80, после оплаты введите /оплачено')
-        shop[str(call.from_user.id)]["покупка"] = {'Корзина': shopping_cart, 'Счёт': score}
         with open('shop_bakery_gr9.json', 'w',encoding='utf-8') as f:
-                json.dump(shop,f,indent=2)
+                json.dump(shop,f,indent=2,ensure_ascii=False)
     elif call.data == 'Да':
-        shop[user_plata_id]['покупка'] = {'Корзина': 0, 'Счёт': 0}
+        shop[user_plata_id]['покупка'] = []
+        shop[user_plata_id]['счёт'] = 0
         with open('shop_bakery_gr9.json', 'w',encoding='utf-8') as f:
-                json.dump(shop,f,indent=2)
+                json.dump(shop,f,indent=2,ensure_ascii=False)
         bot.send_message(user_plata_id,'Ваша оплата подтверждена. Ожидайте заказ')
     elif call.data == 'Нет':
         bot.send_message(call.message.chat.id,f'Оплата не подтверждена, повторите отправку чека пожалуйста.')

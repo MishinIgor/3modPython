@@ -2,25 +2,17 @@
   "1680980801": {
     "TG_fist_name": "Igor",
     "TG_name": "@Imishinigor",
-    "\u043f\u043e\u043a\u0443\u043f\u043a\u0430": {
-      "\u041a\u043e\u0440\u0437\u0438\u043d\u0430": 0,
-      "\u0421\u0447\u0451\u0442": 0
+    "покупка": {
+      "корзина": [],
+      "счёт": 0
     }
-  },
-  "651880918": {
-    "TG_fist_name": "Pavel",
-    "TG_name": "@Wolfhander"
-  },
-  "1394549856": {
-    "TG_fist_name": "Diogen",
-    "TG_name": "@Diogen24"
   },
   "445483379": {
     "TG_fist_name": "Vecreks",
-    "TG_name": "@vecreks"
-  },
-  "1227458870": {
-    "TG_fist_name": "Max",
-    "TG_name": "@Taliward"
+    "TG_name": "@vecreks",
+    "покупка": {
+      "корзина": [],
+      "счёт": 0
+    }
   }
 }
