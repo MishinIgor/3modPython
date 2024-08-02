@@ -16,19 +16,6 @@ lst = []
 for i in button_name:
     lst.append(telebot.types.InlineKeyboardButton(text=str(i),callback_data=str(i)))
 keyboard.add(*lst)
-@bot.message_handler(commands=['start','id'])
-def start(message):
-    if message.text == '/start':
-        global user_id1
-        with open('choise1.txt', 'w') as f:
-            f.write('')
-        with open('choise2.txt', 'w') as f:
-            f.write('')
-        user_id1 = message.from_user.id
-        bot.send_message(user_id1,'С каким пользователем хотите сыграть? Введите его id')
-        bot.register_next_step_handler(message,get_ans)
-    elif message.text == '/id':
-        bot.send_message(message.chat.id,f'Ваш id: {message.from_user.id}')
 def get_ans(message):
     global user_id2
     user_id2 = int(message.text)
@@ -43,6 +30,20 @@ def result(choise1,choise2):
     else:
         bot.send_message(user_id1,f'Вы проиграли! Вы выбрали {choise1}, соперник выбрал {choise2}')
         bot.send_message(user_id2,f'Вы победили! Вы выбрали {choise2}, соперник выбрал {choise1}')
+@bot.message_handler(commands=['start','id'])
+def start(message):
+    if message.text == '/start':
+        global user_id1
+        with open('choise1.txt', 'w') as f:
+            f.write('')
+        with open('choise2.txt', 'w') as f:
+            f.write('')
+        user_id1 = message.from_user.id
+        bot.send_message(user_id1,'С каким пользователем хотите сыграть? Введите его id')
+        bot.register_next_step_handler_by_chat_id(user_id1,message,get_ans)
+    elif message.text == '/id':
+        bot.send_message(message.chat.id,f'Ваш id: {message.from_user.id}')
+
 @bot.callback_query_handler(func=lambda call: True) 
 def call_back(call):
     global call_result,choise1,choise2

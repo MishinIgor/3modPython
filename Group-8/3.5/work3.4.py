@@ -15,7 +15,6 @@ def universal(message):
         button_geo = telebot.types.KeyboardButton(text='Поделиться местоположением',request_location=True)
         keyboard.add(button_geo)
         bot.send_message(message.chat.id,'Поделиться местоположением',reply_markup=keyboard)
-@bot.message_handler(content_types=['location'])
 def info_pogoda(message):
     a = telebot.types.ReplyKeyboardRemove()
     bot.send_message(message.chat.id,pogoda(message.location.latitude,message.location.longitude),reply_markup=a)
